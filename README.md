@@ -4,7 +4,9 @@ Highlight state on graph showing in the new window
 
 Implement blitting
 
-#Completed
+------------------------------------------------------------------------------------------------------------------------
+
+# Completed
 
 Change new window data when clicking on a state.
 
