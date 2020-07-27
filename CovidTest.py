@@ -1,6 +1,6 @@
 import CovidNewWindow as cnw
 import CovidGraph as cg
-import CovidFuntions as cf
+import CovidFunctions as cf
 
 #main
 root, new_window = cf.create_app_base()

@@ -4,11 +4,12 @@ import requests
 import json
 import CovidNewWindow as cnw
 from datetime import datetime
+import os
 
 def create_app_base():
     root = Tk()
     root.title('Cool App')
-    root.iconbitmap('E:\Python\AppTutorial\Images\profile_pic.ico')
+    root.iconbitmap(os.getcwd() + '\Images\profile_pic.ico')
     root.geometry("400x500")
 
     top = Toplevel()

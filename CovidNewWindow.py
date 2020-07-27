@@ -2,13 +2,14 @@ from tkinter import *
 from PIL import ImageTk, Image
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 
 class Window:
     def __init__(self, Top):
         self.top = Top
         self.top.title('Cool App')
-        self.top.iconbitmap('E:\Python\AppTutorial\Images\profile_pic.ico')
+        self.top.iconbitmap(os.getcwd() + '\Images\profile_pic.ico')
         self.top.geometry("200x405")
         self.label_list = []
         self.limit = 5
