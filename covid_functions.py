@@ -2,9 +2,10 @@ from tkinter import *
 from PIL import ImageTk, Image
 import requests
 import json
-import CovidNewWindow as cnw
+import covid_new_window as cnw
 from datetime import datetime
 import os
+
 
 def create_app_base():
     root = Tk()
@@ -19,6 +20,7 @@ def create_app_base():
     # scrollbar.pack(side=RIGHT, fill=Y)
 
     return (root, new_window)
+
 
 def current_state_data_list_request():
     try:
@@ -38,10 +40,12 @@ def current_state_data_list_request():
 
     return api
 
+
 def covid_api_status():
     status = ''
-    try: 
-        api_request = requests.get("https://covidtracking.com/api/v1/status.json", timeout=3)
+    try:
+        api_request = requests.get(
+            "https://covidtracking.com/api/v1/status.json", timeout=3)
         api = json.loads(api_request.content)
         status = api['buildTime']
         status = status.replace('T', ' ').rstrip('.442Z') + '\n'
@@ -54,6 +58,7 @@ def population_data():
     p = open("USPopulation.txt", 'r')
     pop_data = json.loads(p.read())
     return pop_data
+
 
 def print_current_state_positive(root, api):
     print_info = ''
@@ -90,5 +95,3 @@ def set_positive_population(positive_state, population_state, names_state, pop_d
         population_state.append(population['population'] / 100000)
         positive_state.append(positive['positive'] / 1000)
         names_state.append(population['state'])
-        
-
