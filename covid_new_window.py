@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import platform
+import covid_database as cd
 
 
 class Window:
@@ -14,8 +15,12 @@ class Window:
         self.top.geometry("200x405")
         self.label_list = []
         self.limit = 5
+        self.positive = cd.positive_today()
+        self.negative = cd.negative_today()
+        self.total_test = cd.total_test_today()
+        self.death = cd.death_today()
 
-    def print_current_state_positive(self, index_list, name_list, data_list):
+    def print_current_state_positive(self, index_list, name_list):
         if platform.system() == "Darwin":
             width = 255
             length = 90
@@ -34,12 +39,13 @@ class Window:
                 row_counter = 0
             info_string = "{}:\n\tPositive cases: {}\n\tNegative cases: {}\n\tTotal Test Results: {}\n\tDeaths: {}".format(
                 name_list[index],
-                str(data_list[index]["positive"]),
-                str(data_list[index]["negative"]),
-                str(data_list[index]["total"]),
-                str(data_list[index]["death"]),
+                str(self.positive[index]),
+                str(self.negative[index]),
+                str(self.total_test[index]),
+                str(self.death[index]),
             )
-            self.label_list.append(Label(self.top, text=info_string, justify=LEFT))
+            self.label_list.append(
+                Label(self.top, text=info_string, justify=LEFT))
             self.label_list[counter].grid(
                 sticky=W, row=row_counter, column=column_counter
             )

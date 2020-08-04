@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import covid_new_window as cnw
+import copy
 
 
 class CovidGraph:
@@ -8,23 +9,19 @@ class CovidGraph:
         self.window = window
 
     def update_annot(self, ind):
-
         # ind["ind"] is a list of indexes for all points under the curser
-
         pos = self.sc.get_offsets()[ind["ind"][0]]
         self.annot.xy = pos
-        # text = "{}, {}".format(" ".join([self.names[n] for n in ind["ind"]]),
-        #                       " ".join(str([self.y_axis[n] for n in ind["ind"]])))
-        # self.annot.set_text(text)
         self.annot.set_text(self.annotate_string(
             self.names, self.y_axis * 1000, ind["ind"]))
-        # annot.get_bbox_patch().set_facecolor(cmap(norm(c[ind["ind"][0]])))
-        # annot.get_bbox_patch().set_alpha(0.4)
 
     def annotate_string(self, val1, val2, indexes):
         string = ''
         for index in indexes:
-            string = string + str(val1[index]) + ', ' + str(val2[index]) + '\n'
+            string = string + str(val1[index]) + ', ' + \
+                str(val2[index]) + ', ' + \
+                "{:.2f}%".format(
+                    self.y_axis[index] / self.x_axis[index] * 100) + '\n'
         string = string.rstrip("\n")
         return string
 
@@ -48,13 +45,15 @@ class CovidGraph:
             if cont:
                 self.current_indexes_pressed = ind['ind']
                 self.window.print_current_state_positive(
-                    self.current_indexes_pressed, self.names, self.data_list)
+                    self.current_indexes_pressed, self.names)
         return self.current_indexes_pressed
 
-    def create_scatter_plot(self, x_axis, y_axis, names, data_list):
-        self.data_list = data_list
+    def create_scatter_plot(self, x_axis, y_axis, names):
         self.names = names
-        self.y_axis = y_axis
+        self.x_axis = copy.deepcopy(x_axis)
+        self.y_axis = copy.deepcopy(y_axis)
+        x_axis = [x/100000 for x in x_axis]
+        y_axis = [y/1000 for y in y_axis]
         self.fig, self.ax = plt.subplots()
         self.sc = self.ax.scatter(x_axis, y_axis)
 
