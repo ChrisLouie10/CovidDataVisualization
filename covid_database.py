@@ -3,6 +3,14 @@ from datetime import datetime, timedelta
 import requests
 import json
 
+# Note 1: The database uses id's that have real life values
+# date.id = the date of the data in integer form ex.(20200801 is August 1, 2020)
+# date.date_id = the number of days passed the first date recorded, which is
+#                 March 26, 2020 (ex. 130 means 130 days passed March 26,2020).
+# state.id = the state/territory in alphabetical order of their abbreviations
+
+# Note 2: There is 56 states/territories so any data taking the info of all
+#           states/territories will return a list of 56 elements.
 
 # Returns a list containing the positive values from today.
 # Returns -1 if there is no data
@@ -11,11 +19,12 @@ def positive_today():
     c = conn.cursor()
     values = []
 
-    current_date = datetime_to_int(datetime.now())
     with conn:
+        c.execute("SELECT MAX(id) FROM date")
+        latest_date = c.fetchone()[0]
         c.execute(
             """SELECT positive FROM data WHERE (SELECT date_id FROM date WHERE id=:id)=id""",
-            {"id": current_date},
+            {"id": latest_date},
         )
         for item in c.fetchall():
             if item[0] == None:
@@ -33,11 +42,12 @@ def negative_today():
     c = conn.cursor()
     values = []
 
-    current_date = datetime_to_int(datetime.now())
     with conn:
+        c.execute("SELECT MAX(id) FROM date")
+        latest_date = c.fetchone()[0]
         c.execute(
             """SELECT negative FROM data WHERE (SELECT date_id FROM date WHERE id=:id)=id""",
-            {"id": current_date},
+            {"id": latest_date},
         )
         for item in c.fetchall():
             if item[0] == None:
@@ -55,11 +65,12 @@ def death_today():
     c = conn.cursor()
     values = []
 
-    current_date = datetime_to_int(datetime.now())
     with conn:
+        c.execute("SELECT MAX(id) FROM date")
+        latest_date = c.fetchone()[0]
         c.execute(
             """SELECT death FROM data WHERE (SELECT date_id FROM date WHERE id=:id)=id""",
-            {"id": current_date},
+            {"id": latest_date},
         )
         for item in c.fetchall():
             if item[0] == None:
@@ -76,14 +87,15 @@ def total_test_today():
     c = conn.cursor()
     values = []
 
-    current_date = datetime_to_int(datetime.now())
     with conn:
+        c.execute("SELECT MAX(id) FROM date")
+        latest_date = c.fetchone()[0]
         c.execute(
             """SELECT positive, negative FROM data WHERE (SELECT date_id FROM date WHERE id=:id)=id""",
-            {"id": current_date},
+            {"id": latest_date},
         )
         for item in c.fetchall():
-            values.append(item[0]+item[1])
+            values.append(item[0] + item[1])
     conn.close()
     return values
 
@@ -95,11 +107,12 @@ def recovered_today():
     c = conn.cursor()
     values = []
 
-    current_date = datetime_to_int(datetime.now())
     with conn:
+        c.execute("SELECT MAX(id) FROM date")
+        latest_date = c.fetchone()[0]
         c.execute(
             """SELECT recovered FROM data WHERE (SELECT date_id FROM date WHERE id=:id)=id""",
-            {"id": current_date},
+            {"id": latest_date},
         )
         for item in c.fetchall():
             if item[0] == None:
@@ -117,11 +130,12 @@ def hospitalized_today():
     c = conn.cursor()
     values = []
 
-    current_date = datetime_to_int(datetime.now())
     with conn:
+        c.execute("SELECT MAX(id) FROM date")
+        latest_date = c.fetchone()[0]
         c.execute(
             """SELECT hospitalized FROM data WHERE (SELECT date_id FROM date WHERE id=:id)=id""",
-            {"id": current_date},
+            {"id": latest_date},
         )
         for item in c.fetchall():
             if item[0] == None:
@@ -194,20 +208,21 @@ def update_database():
         for item in api:
 
             if item["date"] > latest_date:
-                c.execute("SELECT date_id FROM date WHERE id=:id",
-                          {'id': item["date"]})
+                c.execute("SELECT date_id FROM date WHERE id=:id", {"id": item["date"]})
                 # conn.commit()
                 if c.fetchall() == []:
                     c.execute(
                         "INSERT INTO date VALUES (:id, :date_id)",
-                        {"id": item["date"], "date_id": int_days_difference(
-                            item['date'], latest_date) + latest_date_id},
+                        {
+                            "id": item["date"],
+                            "date_id": int_days_difference(item["date"], latest_date)
+                            + latest_date_id,
+                        },
                     )
                     conn.commit()
 
                 c.execute(
-                    "SELECT date_id FROM date WHERE id = :id", {
-                        "id": item["date"]}
+                    "SELECT date_id FROM date WHERE id = :id", {"id": item["date"]}
                 )
                 date_id = c.fetchone()[0]
                 # conn.commit()
@@ -269,16 +284,14 @@ def update_database():
 # days is the number of days to add to the given date
 # returns the new date in int form
 def datetime_to_int(date, days=0):
-    return int(
-        "".join(str(date.date() + timedelta(hours=3, days=days)).split("-"))
-    )
+    return int("".join(str(date.date() + timedelta(hours=3, days=days)).split("-")))
 
 
 # Converts an int to a datetime
 # date is a date in int form
 # returns the date into an int.
 def int_to_datetime(date):
-    return datetime.strptime(str(date), '%Y%m%d')
+    return datetime.strptime(str(date), "%Y%m%d")
 
 
 # Returns the difference in days between two dates as an int.
