@@ -20,10 +20,7 @@ class Window:
         self.total_test = cd.total_test_today()
         self.death = cd.death_today()
 
-    # Prints the current state data of points in the index
-    # index_list is a list of index the cursor clicked on
-    # name_list is the list of state names
-    def print_current_state_data(self, index_list, name_list):
+    def print_current_state_positive(self, index_list, name_list):
         if platform.system() == "Darwin":
             width = 255
             length = 90
@@ -47,7 +44,8 @@ class Window:
                 str(self.total_test[index]),
                 str(self.death[index]),
             )
-            self.label_list.append(Label(self.top, text=info_string, justify=LEFT))
+            self.label_list.append(
+                Label(self.top, text=info_string, justify=LEFT))
             self.label_list[counter].grid(
                 sticky=W, row=row_counter, column=column_counter
             )

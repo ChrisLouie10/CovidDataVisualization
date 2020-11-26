@@ -4,20 +4,21 @@ import covid_functions as cf
 import covid_database as cd
 
 # main
-
-# Create Tkinter widgets and Update database
 root, new_window = cf.create_app_base()
 cd.update_database()
 
-# Show data/Create graphs
+positive_state = cd.positive_today()
+print(positive_state)
+population_state = cd.state_population()
+print(population_state)
+names_state = cd.state_names()
+print(names_state)
 
-cf.print_current_state_positive_label(root, cd.state_names(), cd.positive_today())
+cf.print_current_state_positive_label(root, names_state, positive_state)
 
 pos_pop_graph = cg.CovidGraph()
 pos_pop_graph.connect_window(new_window)
-pos_pop_graph.create_scatter_plot(
-    cd.state_population(), cd.positive_today(), cd.state_names()
-)
+pos_pop_graph.create_scatter_plot(population_state, positive_state, names_state)
 
 
 root.mainloop()
