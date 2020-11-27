@@ -1,6 +1,6 @@
 
 
-# CovidDataVizualization  
+# CovidDataVisualization  
 
 Small program that a chart Covid data taken from The COVID Tracking Project to see recent data.
 
