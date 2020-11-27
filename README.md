@@ -16,6 +16,8 @@ The program uses The COVID Tracking Projects to obtain data. The data is taken i
 
 ![Database Diagram](/Images/DatabaseIdeas.png)
 
+Note: All work done by one person on different accounts.
+
 ### To-Do List
 
 Create graphs showing long-term data of a selected state.
